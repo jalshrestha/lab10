@@ -1,31 +1,37 @@
-import './App.css';
+import React, { useState } from 'react';
+import request from 'browser-request';
 
-import Container from './Container';
-import MyList from './ItemList';
-const items = [
-  { id: 1, name: 'Item 1' },
-  { id: 2, name: 'Item 2' },
-  { id: 3, name: 'Item 3' },
-];
-const myStyle = {
-  backgroundColor: 'blue',
-  color: 'white',
-  padding: '10px 20px',
-  border: 'none',
-  borderRadius: '5px',
-};
-function App() {
+function CatImage() {
+  const [imageUrl, setImageUrl] = useState(null);
+
+  const fetchCatImage = () => {
+    const apikey = 'e9df62b8-28ec-46e8-8db4-401d596f1231';
+    const url = 'https://api.thecatapi.com/v1/images/search';
+    const headers = {
+      'x-api-key': apikey
+    };
+    request({ url, headers, json: true }, (error, response, body) => {
+      if (error) {
+        console.error(error);
+      } else if (!response.statusCode === 200) {
+        console.error(HTTP error! Status: ${response.statusCode});
+      } else {
+        setImageUrl(body[0].url);
+      }
+    });
+  };
+  
+
   return (
-    <div className="App">
-      <header className='App-header'>
-       <h1>This is react app!</h1>
-       <Container style ={myStyle} />
-       <h1  style={{ fontWeight: 'italic' }}>My List</h1>
-       <MyList items={items} className ="list"/>
-      </header>
-     
+    <div>
+      {imageUrl ? (
+        <img src={imageUrl} alt="Random cat" />
+      ) : (
+        <p>No cat image yet</p>
+      )}
+      <button onClick={fetchCatImage}>Get Random Cat Image</button>
     </div>
   );
 }
 
-export default App;
+export default CatImage;
